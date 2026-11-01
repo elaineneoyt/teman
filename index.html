@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Teman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* One visual world: near-black ink, one thin line of light that pulses at the feeling's tempo. Single column, lots of air. */
+  --ink:#0B0B0E;
+  --paper:#EDE8DF;
+  --muted:rgba(237,232,223,.64);
+  --faint:rgba(237,232,223,.38);
+  --line:rgba(237,232,223,.13);
+  --a:#EDE8DF;
+  --display:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --body:"Hanken Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:var(--ink);color:var(--paper)}
+body{font-family:var(--body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 20px) max(22px,env(safe-area-inset-right)) calc(env(safe-area-inset-bottom) + 48px) max(22px,env(safe-area-inset-left))}
+a{color:inherit}
+a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:1px solid var(--a);outline-offset:4px}
+header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.mark{font-family:var(--display);font-size:28px;line-height:1;text-decoration:none}
+nav{display:flex;gap:18px;font-family:var(--mono);font-size:12px;letter-spacing:.02em}
+nav a{text-decoration:none;color:var(--faint)}
+nav a[aria-current="page"]{color:var(--paper)}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--faint)}
+h1,h2{font-weight:400;text-wrap:balance;margin:0}
+.hero{font-family:var(--display);font-size:clamp(46px,13vw,76px);line-height:.96;letter-spacing:-.015em;margin-top:27vh}
+.nudge{margin:18px 0 0;color:var(--muted);font-size:15px}
+.nudge a{font-family:var(--display);font-style:italic;font-size:22px;color:var(--paper);text-decoration:none;border-bottom:1px solid var(--a)}
+.toggle{display:flex;gap:6px;margin-top:40px}
+.toggle button{font-family:var(--mono);font-size:12px;background:none;border:1px solid var(--line);color:var(--faint);padding:6px 12px;border-radius:999px;cursor:pointer}
+.toggle button[aria-pressed="true"]{color:var(--paper);border-color:var(--faint)}
+.group{margin-top:36px}
+.group h2{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--muted);display:flex;justify-content:space-between;gap:10px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.group h2 span{color:var(--faint)}
+.rows{display:grid}
+.row{display:grid;grid-template-columns:1fr auto;align-items:baseline;gap:12px;text-decoration:none;padding:10px 0;border-bottom:1px solid var(--line)}
+.row b{font-family:var(--display);font-weight:400;font-size:30px;line-height:1.05;color:var(--c)}
+.row small{display:block;font-size:13px;color:var(--faint);font-style:italic;margin-top:2px}
+.row .bpm{font-family:var(--mono);font-size:12px;color:var(--faint);text-align:right;white-space:nowrap}
+.row .bpm i{display:block;font-style:normal;height:2px;margin-top:6px;background:var(--c);opacity:.7}
+.row:hover b{text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:6px}
+.back{display:inline-block;font-family:var(--mono);font-size:12px;color:var(--faint);text-decoration:none;margin-top:28px}
+.mtop{margin-top:22vh}
+.mname{font-family:var(--display);font-size:clamp(58px,17vw,108px);line-height:.92;letter-spacing:-.015em;margin-top:8px;color:var(--paper)}
+.local{font-family:var(--display);font-style:italic;font-size:24px;color:var(--a);margin:6px 0 0}
+.moment{font-family:var(--display);font-size:25px;line-height:1.28;margin:28px 0 0;max-width:26ch}
+.tempo{margin-top:30px;display:grid;gap:8px}
+.tempo-read{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;color:var(--paper)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--a)}
+.scale{position:relative;height:16px}
+.scale::before{content:"";position:absolute;left:0;right:0;top:7px;height:1px;background:var(--line)}
+.scale span{position:absolute;top:2px;width:2px;height:12px;background:var(--a);transform:translateX(-1px)}
+.scale-l{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11px;color:var(--faint)}
+.meta{margin:22px 0 0;color:var(--muted);font-size:14px;display:grid;gap:4px}
+.meta b{font-weight:500;color:var(--paper)}
+.sec{font-family:var(--mono);font-size:12px;letter-spacing:.02em;color:var(--muted);margin:48px 0 0;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.set{padding:18px 0;border-bottom:1px solid var(--line);display:grid;gap:10px;background:linear-gradient(var(--ink),var(--ink)) padding-box;background-color:rgba(11,11,14,.72)}
+.set-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.who{font-family:var(--display);font-size:25px;line-height:1.1}
+.who span{display:block;font-family:var(--mono);font-size:11px;color:var(--faint);margin-top:4px;letter-spacing:.02em}
+.sbpm{font-family:var(--mono);font-size:12px;color:var(--paper);white-space:nowrap;text-align:right}
+.sbpm em{display:block;font-style:normal;color:var(--faint);font-size:11px}
+.bars{display:flex;align-items:center;gap:2px;height:26px;color:var(--a)}
+.bars i{flex:1;max-width:4px;background:currentColor;border-radius:1px;opacity:.85;transform-origin:center;animation:kick var(--beat) cubic-bezier(.2,.7,.3,1) infinite;animation-delay:calc(var(--d) * -1s)}
+@keyframes kick{0%{transform:scaleY(1)}55%{transform:scaleY(.32)}100%{transform:scaleY(.32)}}
+.sound{margin:0;font-size:15px}
+.where{margin:0;font-family:var(--mono);font-size:11px;color:var(--faint);letter-spacing:.02em}
+.go{justify-self:start;display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;text-decoration:none;padding:9px 14px;border-radius:999px;border:1px solid var(--a);color:var(--paper)}
+.go:hover{background:rgba(237,232,223,.06)}
+.empty{padding:18px 0;color:var(--muted);border-bottom:1px solid var(--line)}
+.drift{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.chip{font-size:14px;text-decoration:none;padding:9px 14px;border-radius:999px;border:1px solid var(--line);color:var(--paper)}
+.chip i{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--faint);margin-left:4px}
+.cta{margin-top:40px;font-size:15px;color:var(--muted)}
+.prose{max-width:58ch}
+.prose h1{font-family:var(--display);font-size:clamp(40px,10vw,60px);line-height:1;margin-top:27vh}
+.prose h2{font-family:var(--display);font-size:27px;margin:36px 0 8px}
+.prose p,.prose li{color:var(--muted)}
+.prose strong{color:var(--paper);font-weight:500}
+.prose ul{padding-left:18px}
+form{display:grid;gap:18px;margin-top:24px}
+label{display:grid;gap:6px;font-size:14px;color:var(--muted)}
+input[type=text],input[type=url],select,textarea{font:inherit;color:var(--paper);background:rgba(11,11,14,.8);border:1px solid var(--line);border-radius:8px;padding:11px 12px;width:100%}
+select option,select optgroup{background:#18171c;color:var(--paper)}
+textarea{min-height:84px;resize:vertical}
+.check{display:flex;gap:10px;align-items:flex-start}
+.check input{margin-top:4px;accent-color:var(--a)}
+.err{color:#FFB4A8;font-size:13px;min-height:1em;margin:0}
+.btn{font:inherit;font-weight:600;cursor:pointer;justify-self:start;padding:12px 20px;border-radius:999px;border:none;background:var(--paper);color:var(--ink)}
+.note{border-top:1px solid var(--line);padding-top:16px;margin-top:18px}
+.note[hidden]{display:none}
+footer{margin-top:72px;padding-top:16px;border-top:1px solid var(--line);font-family:var(--mono);font-size:11px;line-height:1.7;color:var(--faint)}
+.view{animation:rise .6s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.view{animation:none}.bars i{animation:none}}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+html{overflow-x:hidden}
+.scene{position:relative;width:100vw;margin-left:calc(50% - 50vw);height:30vh;min-height:200px;overflow:hidden;touch-action:pan-y;cursor:crosshair}
+.scene canvas{position:absolute;inset:0;display:block}
+.scene.big{height:50vh;min-height:330px;margin-top:10px}
+.hint{position:absolute;right:max(22px,calc(50vw - 288px));top:12px;z-index:2;font-family:var(--mono);font-size:11px;color:var(--faint);pointer-events:none;letter-spacing:.02em}
+.door{position:absolute;z-index:2;text-decoration:none;font-family:var(--display);font-size:21px;line-height:1;padding:9px 14px 10px;border-radius:999px;color:var(--paper);background:rgba(11,11,14,.55);border:1px solid var(--c);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);animation:float 7s ease-in-out infinite;animation-delay:var(--dl);white-space:nowrap}
+.door i{font-style:normal;font-family:var(--mono);font-size:10px;color:var(--faint);display:block;margin-top:4px}
+.door:hover{background:rgba(11,11,14,.8)}
+@keyframes float{0%,100%{transform:translate(0,0)}33%{transform:translate(6px,-9px)}66%{transform:translate(-5px,5px)}}
+.mtop{margin-top:4px}
+.hero{margin-top:2vh}
+.prose h1{margin-top:2vh}
+.pvbtn{font:inherit;font-size:14px;cursor:pointer;justify-self:start;display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--paper)}
+.pvbtn:hover{border-color:var(--a)}
+.acts{display:flex;flex-wrap:wrap;gap:8px}
+.pv{display:grid;gap:8px}
+.pv iframe{width:100%;border:0;border-radius:8px;background:#000}
+.pv .yt{aspect-ratio:16/9}
+.pv .sc{height:120px;background:none}
+.pvbar{height:2px;background:var(--line);border-radius:2px;overflow:hidden}
+.pvbar i{display:block;height:100%;width:0;background:var(--a)}
+.pvnote{font-family:var(--mono);font-size:11px;color:var(--faint);margin:0}
+.set:hover .who{color:var(--a)}
+@media (prefers-reduced-motion:reduce){.door{animation:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="mark" href="#feelings">Teman</a>
+    <nav aria-label="Main">
+      <a href="#feelings" data-nav="feelings">feelings</a>
+      <a href="#suggest" data-nav="suggest">suggest a set</a>
+      <a href="#why" data-nav="why">why</a>
+    </nav>
+  </header>
+  <main id="app" aria-live="polite"></main>
+  <footer>Teman · a listening map of Southeast Asian selectors<br>No plays, no charts, no follower counts. Tempos are estimates.</footer>
+</div>
+<script>
+const SETS = [{"n": "Halia", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E51 (Life In Arpeggio)", "sound": "A dreamy after-party set: lounge, downtempo, spiritual textures and hazy Cantonese funk", "p": "drifting", "also": ["back-then", "tender"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e51-halia", "plat": "SoundCloud", "bpm": 100, "rng": "90-110"}, {"n": "Mari", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E50 (Life In Arpeggio)", "sound": "Fast space funk and indie dance with 8-bit synths and robot vocals", "p": "living-room-dancing", "also": ["playful", "nostalgic"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e50-mari", "plat": "SoundCloud", "bpm": 126, "rng": "122-130"}, {"n": "EJ Missy", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E37 (Life In Arpeggio)", "sound": "Organic house and melodic techno with strings, woodwinds and percussion", "p": "awed", "also": ["warm"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e37-ej-missy", "plat": "SoundCloud", "bpm": 122, "rng": "118-124"}, {"n": "Dee", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E45 (Life In Arpeggio)", "sound": "Singaporean hip-hop and R&B, sunny-side up", "p": "easy", "also": ["living-room-dancing", "warm"], "url": "https://m.soundcloud.com/lifeinarpeggio/15-min-flash-mix-e45-dee", "plat": "SoundCloud", "bpm": 92, "rng": "85-100"}, {"n": "howrøng", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E48 (Life In Arpeggio)", "sound": "Ferociously experimental techno from the Bussy Temple crew", "p": "burning", "also": ["out-of-my-head"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e48-howrong", "plat": "SoundCloud", "bpm": 140, "rng": "130-150"}, {"n": "sho&tell", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E49 (Life In Arpeggio)", "sound": "A set about duality: breaks, acid and techno, light and dark", "p": "restless", "also": ["released"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e49-shotell", "plat": "SoundCloud", "bpm": 132, "rng": "128-138"}, {"n": "Nino Blink", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E47 (Life In Arpeggio)", "sound": "Pounding peak-time techno, billed as a 15-minute remedy", "p": "released", "also": ["club-dancing", "burning"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e47-nino-blink", "plat": "SoundCloud", "bpm": 135, "rng": "130-140"}, {"n": "Vix", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E40 (Life In Arpeggio)", "sound": "Next-generation techno", "p": "released", "also": ["club-dancing", "tahan"], "url": "https://m.soundcloud.com/lifeinarpeggio/15-min-flash-mix-e40-vix", "plat": "SoundCloud", "bpm": 132, "rng": "128-136"}, {"n": "AYA", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E33 (Life In Arpeggio)", "sound": "A heavyweight session of 'technorobics' that asks for floor space", "p": "released", "also": ["club-dancing", "burning"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e33-aya", "plat": "SoundCloud", "bpm": 140, "rng": "135-145"}, {"n": "Toppings", "city": "Singapore", "ctry": "Singapore", "where": "15-Min Flash Mix E20 (Life In Arpeggio)", "sound": "A jovial Ice Cream Sundays resident", "p": "playful", "also": ["shower-dancing", "easy"], "url": "https://soundcloud.com/lifeinarpeggio/15-min-flash-mix-e20-toppings", "plat": "SoundCloud", "bpm": 118, "rng": "112-124"}, {"n": "GTHB (Goth Hobbit)", "city": "Singapore / Naarm", "ctry": "Singapore", "where": "AV021 (The Analog Vault)", "sound": "Club techno from a DJ 'fully meant for the club'", "p": "burning", "also": ["released"], "url": "https://soundcloud.com/theanalogvault/av021-gthb", "plat": "SoundCloud", "bpm": 138, "rng": "132-145"}, {"n": "Krstn", "city": "Singapore", "ctry": "Singapore", "where": "Unchained Mix Series 067", "sound": "Leftfield bass with hip-hop edges, gritty", "p": "tahan", "also": ["out-of-my-head"], "url": "https://soundcloud.com/unchainedasia/unchained-mix-series-06-krstn", "plat": "SoundCloud", "bpm": 140, "rng": "140, half-time feel"}, {"n": "The Weatherman", "city": "Singapore", "ctry": "Singapore", "where": "Vinyl Set at Mandala Club 2024", "sound": "All-vinyl set from a selector whose motto is gentle transitions", "p": "drifting", "also": ["awed"], "url": "https://soundcloud.com/ryantheweatherman/vinyl-set-at-mandala-club-2024", "plat": "SoundCloud", "bpm": 105, "rng": "95-115"}, {"n": "Dexter Colt", "city": "Singapore", "ctry": "Singapore", "where": "Super Enjoy: Lovers Rock Special (Bangkok Community Radio)", "sound": "A lovers rock special, 'a lovers rock special we very need right now'", "p": "lonely", "also": ["close", "tender", "slow-burn"], "url": "https://soundcloud.com/bangkokcommunityradio/super-enjoy-lovers-rock-special-w-dexter-colt-14th-october-2025-bangkok-community-radio", "plat": "SoundCloud", "bpm": 75, "rng": "70-85"}, {"n": "Bongomann", "city": "Singapore", "ctry": "Singapore", "where": "Super Enjoy Listen Sesh (Bangkok Community Radio)", "sound": "Billed as ideal for a lie-down listening session", "p": "numb", "also": ["drifting"], "url": "https://soundcloud.com/bangkokcommunityradio/super-enjoy-listen-sesh-w-bongomann-18th-november-2025-bangkok-community-radio", "plat": "SoundCloud", "bpm": 75, "rng": "mostly unhurried"}, {"n": "Hammy", "city": "Singapore", "ctry": "Singapore", "where": "Nava's Guest Selection (Bangkok Community Radio)", "sound": "An organic journey through psychill, trip-hop and downtempo; spacious, then a little dancier", "p": "awed", "also": ["drifting"], "url": "https://soundcloud.com/bangkokcommunityradio/navas-guest-selection-w-hammy-27th-december-2025-bangkok-community-radio", "plat": "SoundCloud", "bpm": 95, "rng": "85-110"}, {"n": "Leland", "city": "Singapore", "ctry": "Singapore", "where": "Voices Radio, 13 March 2024", "sound": "Soul and electronic R&B, easing into chill jazzy house", "p": "slow-burn", "also": ["easy", "tender"], "url": "https://m.soundcloud.com/voicesradio_ldn/leland-130324-voices-radi?in=lelandt/sets/radio-mixes", "plat": "SoundCloud", "bpm": 100, "rng": "90-118"}, {"n": "Muto", "city": "Singapore", "ctry": "Singapore", "where": "SFM Podcast #64: Ice Cream Sundays", "sound": "Sunday-session mix from a selector raised on old Japanese funk and disco", "p": "easy", "also": ["bar-dancing", "back-then"], "url": "https://soundcloud.com/shifumiz/sfm-podcast-64-ice-cream-sundays", "plat": "SoundCloud", "bpm": 115, "rng": "110-120"}, {"n": "James Selva", "city": "Singapore", "ctry": "Singapore", "where": "Mixmag Asia Radio 139", "sound": "Psychedelic house and breaks; his own words: groovy, cheeky, introspective", "p": "playful", "also": ["shower-dancing", "awed"], "url": "https://soundcloud.com/iriejamesy/mixmag-asia-radio-139-james-selva-singapore", "plat": "SoundCloud", "bpm": 124, "rng": "120-130"}, {"n": "Suffyan", "city": "Singapore", "ctry": "Singapore", "where": "Shutter Rhythms, 24 November 2025", "sound": "A 'soft but not so soft landing' after a year of good and bad", "p": "tender", "also": ["heavy"], "url": "https://www.youtube.com/watch?v=MWsTvYKuimo", "plat": "YouTube", "bpm": 110, "rng": "100-120"}, {"n": "Xinyi", "city": "Singapore", "ctry": "Singapore", "where": "Shutter Rhythms, 3 March 2026", "sound": "A Sunday drop from a selector of pure intentions and soul", "p": "sultry", "also": ["warm", "easy"], "url": "https://www.youtube.com/watch?v=o1nQBKU8FyM", "plat": "YouTube", "bpm": 105, "rng": "95-115"}, {"n": "Dean Chew", "city": "Singapore", "ctry": "Singapore", "where": "Carhartt Calibrate Vol. 2", "sound": "One hour, vinyl only: gospel, street soul, boogie rap, new jack swing, jazz-tinged house", "p": "warm", "also": ["bar-dancing", "sultry", "back-then"], "url": "https://m.youtube.com/watch?v=HigPFB1jIfM", "plat": "YouTube", "bpm": 105, "rng": "95-120"}, {"n": "Marco Weibel", "city": "New York (from Singapore)", "ctry": "Singapore", "where": "Darker Than Wax FM, 4 May 2025", "sound": "Two hours of diverse rhythms, present yet deeply rooted", "p": "warm", "also": ["awed"], "url": "https://www.youtube.com/watch?v=bPju8Sc8enM", "plat": "YouTube", "bpm": 110, "rng": "90-125"}, {"n": "Jenn Chunes", "city": "Singapore", "ctry": "Singapore", "where": "Kiosk Radio: Darker Than Wax w/ Dean Chew", "sound": "Leftfield grooves with a raw approach to mixing", "p": "bar-dancing", "also": ["easy", "restless"], "url": "https://m.soundcloud.com/kioskradio/outsiders-darker-884675925?in_system_playlist=artist-stations:500132", "plat": "SoundCloud", "bpm": 115, "rng": "105-125"}, {"n": "Daryl Knows", "city": "Singapore", "ctry": "Singapore", "where": "Sunday Best 03 (Ice Cream Sundays)", "sound": "A smooth, feel-good soundtrack for a Sunday", "p": "easy", "also": ["living-room-dancing", "warm"], "url": "https://soundcloud.com/icecreamsundays/sunday-best-03-daryl-knows", "plat": "SoundCloud", "bpm": 118, "rng": "112-122"}, {"n": "Nez Senja", "city": "Singapore", "ctry": "Singapore", "where": "Sunday Best 09 (Ice Cream Sundays)", "sound": "Drum and bass energy from the Sub City crew", "p": "out-of-my-head", "also": ["released"], "url": "https://soundcloud.com/icecreamsundays/sunday-best-09-senja", "plat": "SoundCloud", "bpm": 172, "rng": "170-175"}, {"n": "DJ KOTE LEMBU + otakotak", "city": "Kuala Lumpur", "ctry": "Malaysia", "where": "Boiler Room: Kuala Lumpur", "sound": "Part of a showcase of the city's hyper-diversity", "p": "playful", "also": ["table-dancing", "shiok"], "url": "https://soundcloud.com/platform/dj-kote-lembu-otakotak-kuala", "plat": "SoundCloud", "bpm": 128, "rng": "120-135"}, {"n": "Jovynn", "city": "Kuala Lumpur", "ctry": "Malaysia", "where": "Stovelab: Echo Chamber", "sound": "Hard techno, 50 floors above the city; strobes and sweat", "p": "burning", "also": ["released"], "url": "https://www.youtube.com/watch?v=acvVgKSQ1_Q", "plat": "YouTube", "bpm": 150, "rng": "145-155"}, {"n": "Ridwan (Dekadenz)", "city": "Jakarta", "ctry": "Indonesia", "where": "Kiosk Radio: Outsiders, Dekadenz Records", "sound": "Primitive electronics and synthetic rhythms", "p": "tahan", "also": ["out-of-my-head"], "url": "https://soundcloud.com/kioskradio/outsiders-dekadenz-records-w-ridwan", "plat": "SoundCloud", "bpm": 120, "rng": "110-125"}, {"n": "Ecilo", "city": "Jakarta", "ctry": "Indonesia", "where": "UNDERRADAR session, Sonaa Space", "sound": "Lush, raw, hypnotic techno", "p": "focused", "also": ["released"], "url": "https://www.youtube.com/watch?v=rCib94bd4kE", "plat": "YouTube", "bpm": 132, "rng": "128-135"}, {"n": "Raissa Febriani", "city": "Bali", "ctry": "Indonesia", "where": "Shutter Rhythms, 2 April 2026", "sound": "Experimental club forms meeting Indonesian rhythmic tradition", "p": "tahan", "also": ["back-then"], "url": "https://www.youtube.com/watch?v=fjcM8knSoDY", "plat": "YouTube", "bpm": 130, "rng": "120-140"}, {"n": "Munir", "city": "Bali", "ctry": "Indonesia", "where": "Mixmag Asia Radio 059", "sound": "A digger who plays rare tunes simply so more people hear them", "p": "awed", "also": ["back-then"], "url": "https://soundcloud.com/mixmagasia/mixmag-asia-radio-059-munir", "plat": "SoundCloud", "bpm": 115, "rng": "105-122"}, {"n": "Sergio Berlino", "city": "Jakarta", "ctry": "Indonesia", "where": "Live at DIVINE Jakarta, February 2024", "sound": "Club set from a SALA Records co-founder", "p": "easy", "also": ["bar-dancing", "bright"], "url": "https://soundcloud.com/sergioberlino84/live-at-divine-jakarta-feburuary-2024wav", "plat": "SoundCloud", "bpm": 123, "rng": "120-126"}, {"n": "Indra7 (b2b Apsara)", "city": "Jakarta", "ctry": "Indonesia", "where": "Apsara b2b Indra7, Morabito Villa, Bali", "sound": "Back-to-back villa party set", "p": "shiok", "also": ["focused"], "url": "https://www.youtube.com/watch?v=eOrAgm_xaTU", "plat": "YouTube", "bpm": 124, "rng": "120-126"}, {"n": "Maft Sai", "city": "Bangkok", "ctry": "Thailand", "where": "A Brief History of 20th Century Thai Music (Stamp The Wax)", "sound": "Traditional and contemporary Thai music strung together by the Zudrangma founder", "p": "back-then", "also": ["shiok"], "url": "https://soundcloud.com/stampthewax/a-brief-history-of-20th-century-thai-music-mixed-by-maft-sai", "plat": "SoundCloud", "bpm": 110, "rng": "90-130"}, {"n": "Issasha", "city": "Bangkok", "ctry": "Thailand", "where": "Slow Jams (Bangkok Community Radio)", "sound": "Relaxed, chill slow jams", "p": "close", "also": ["tender", "slow-burn"], "url": "https://soundcloud.com/bangkokcommunityradio/issasha-slow-jams-4th-february?in=issasha/sets/bcr-w-issasha", "plat": "SoundCloud", "bpm": 80, "rng": "70-90"}, {"n": "Seelie", "city": "Bangkok", "ctry": "Thailand", "where": "The Breakfast Show (Bangkok Community Radio)", "sound": "Deep downtempo delights from across the globe", "p": "drifting", "also": ["easy"], "url": "https://soundcloud.com/bangkokcommunityradio/the-breakfast-show-w-seelie-james-falco", "plat": "SoundCloud", "bpm": 95, "rng": "85-105"}, {"n": "Wavelenth", "city": "Bangkok", "ctry": "Thailand", "where": "'From the fragments of us' live set (Bangkok Community Radio)", "sound": "Ambient storytelling, live", "p": "heavy", "also": ["numb"], "url": "https://m.soundcloud.com/bangkokcommunityradio/wavelenth-from-the-fragments-of-us-live-set-8th-february-2025", "plat": "SoundCloud", "bpm": 55, "rng": "no fixed pulse"}, {"n": "K9", "city": "Bangkok", "ctry": "Thailand", "where": "Y WE PLAY? (Bangkok Community Radio)", "sound": "A reggae and dub selector rooted in Thailand's dub scene", "p": "cosy", "also": ["tahan"], "url": "https://soundcloud.com/bangkokcommunityradio/y-we-play-with-k9-13th-may-2023", "plat": "SoundCloud", "bpm": 75, "rng": "70-80"}, {"n": "Sarayu", "city": "Bangkok", "ctry": "Thailand", "where": "Mixmag Asia Radio 031", "sound": "London-leaning grime and grit over heavy four-to-the-floor", "p": "released", "also": ["club-dancing", "tahan"], "url": "https://soundcloud.com/mixmagasia/mixmag-asia-radio-031-sarayu", "plat": "SoundCloud", "bpm": 132, "rng": "128-136"}, {"n": "Krit Morton", "city": "Bangkok", "ctry": "Thailand", "where": "We're Digging People (Bangkok Community Radio)", "sound": "A fully electro hybrid set, records and digital", "p": "focused", "also": ["out-of-my-head"], "url": "https://soundcloud.com/bangkokcommunityradio/were-digging-people-w-krit", "plat": "SoundCloud", "bpm": 125, "rng": "120-130"}, {"n": "DOTT", "city": "Bangkok", "ctry": "Thailand", "where": "Mixmag Asia Radio 024", "sound": "A smooth-as-butter ride through deep house, tech and breaks", "p": "focused", "also": ["drifting"], "url": "https://soundcloud.com/mixmagasia/mixmag-asia-radio-024-dott", "plat": "SoundCloud", "bpm": 122, "rng": "118-126"}, {"n": "Wildealer", "city": "Bangkok", "ctry": "Thailand", "where": "Sunset Sessions 2, Café Del Mar Phuket", "sound": "A sunset set", "p": "awed", "also": ["shiok"], "url": "https://www.youtube.com/watch?v=LXquKp_PLPI", "plat": "YouTube", "bpm": 118, "rng": "112-122"}, {"n": "Bugsy Bae", "city": "Bangkok", "ctry": "Thailand", "where": "Bangkok Community Radio, 19 July 2025", "sound": "Trance and techno woven into stories for the subconscious", "p": "out-of-my-head", "also": ["awed"], "url": "https://m.soundcloud.com/bangkokcommunityradio/bugsy-bae-19th-july-2025-bangkok-community-radio", "plat": "SoundCloud", "bpm": 138, "rng": "135-142"}, {"n": "hearthealer", "city": "Manila", "ctry": "Philippines", "where": "Valentine's Mix (Manila Community Radio)", "sound": "Ambient and trancey, a belated Valentine's mood", "p": "yearning", "also": ["close", "tender"], "url": "https://www.youtube.com/watch?v=5G2kIReBtow", "plat": "YouTube", "bpm": 100, "rng": "ambient into 130s"}, {"n": "Versailles", "city": "Manila", "ctry": "Philippines", "where": "Live at The Bouldering Hive (Manila Community Radio)", "sound": "Three hours of high-energy techno for a climbing gym", "p": "tahan", "also": ["released"], "url": "https://www.youtube.com/watch?v=D7YC1ps7WnI", "plat": "YouTube", "bpm": 138, "rng": "134-142"}, {"n": "Gene GMGY", "city": "Manila", "ctry": "Philippines", "where": "Firmament of Heaven (Manila Community Radio)", "sound": "Equal parts kitsch and mind-melting", "p": "playful", "also": ["living-room-dancing", "out-of-my-head"], "url": "https://www.youtube.com/watch?v=CztgOp7yXt8", "plat": "YouTube", "bpm": 125, "rng": "110-140"}, {"n": "DJ Love", "city": "Davao", "ctry": "Philippines", "where": "Boiler Room x Manila Community Radio", "sound": "Budots, Davao City's native sound, at full maximalism", "p": "table-dancing", "also": ["shiok", "back-then"], "url": "https://soundcloud.com/platform/dj-love-manila-community-radio", "plat": "SoundCloud", "bpm": 132, "rng": "128-138"}, {"n": "UNOS", "city": "Manila", "ctry": "Philippines", "where": "Manila Community Radio", "sound": "Deep electronic digs", "p": "focused", "also": ["drifting"], "url": "https://www.youtube.com/watch?v=K4dwa4bUXkI", "plat": "YouTube", "bpm": 118, "rng": "112-124"}, {"n": "Manikk", "city": "Hanoi", "ctry": "Vietnam", "where": "Ethereal Transmissions (DSTRACKTD)", "sound": "An emotional core wrapped in metallic stabs, 808s and broken beat", "p": "sad-but-dancing", "also": ["sultry", "warm"], "url": "https://soundcloud.com/dstracktd/manikk-hanoi-vietnam", "plat": "SoundCloud", "bpm": 125, "rng": "120-130"}, {"n": "Levi Oi", "city": "Saigon", "ctry": "Vietnam", "where": "Groovy House Set by the Pool", "sound": "Groovy house and warm vibes at a pool party", "p": "shower-dancing", "also": ["bright", "easy"], "url": "https://www.youtube.com/watch?v=7cmyjeEA3dg", "plat": "YouTube", "bpm": 122, "rng": "120-124"}, {"n": "Khoa Bicycle", "city": "Hanoi", "ctry": "Vietnam", "where": "Mogra Radio #033", "sound": "A selector shaped by years of hearing every genre at Broma", "p": "focused", "also": ["drifting"], "url": "https://soundcloud.com/mograradio/khoa-bicycle-mogra-radio-30", "plat": "SoundCloud", "bpm": 126, "rng": "122-128"}, {"n": "Khoi Mai", "city": "Saigon", "ctry": "Vietnam", "where": "Mixmag Asia Radio 032", "sound": "Rolling percussion and 4am house, like a good night out in HCMC", "p": "club-dancing", "also": ["shiok", "drifting"], "url": "https://soundcloud.com/mixmagasia/mixmag-asia-radio-032-khoi-mai", "plat": "SoundCloud", "bpm": 122, "rng": "120-124"}, {"n": "Tùng Tím", "city": "Vietnam", "ctry": "Vietnam", "where": "Mixmag Asia Radio 027", "sound": "From space disco and house into a high-energy frenzy", "p": "playful", "also": ["table-dancing", "shiok"], "url": "https://soundcloud.com/mixmagasia/mixmag-asia-radio-027-tung-tim", "plat": "SoundCloud", "bpm": 128, "rng": "122-135"}, {"n": "Puppy Ri0t", "city": "Saigon", "ctry": "Vietnam", "where": "NON NON NON (Bangkok Community Radio)", "sound": "Rejects genre limits; redline energy", "p": "burning", "also": ["table-dancing", "released"], "url": "https://soundcloud.com/bangkokcommunityradio/non-non-non-w-puppy-ri0tt-29th-october-2023", "plat": "SoundCloud", "bpm": 150, "rng": "140-160"}, {"n": "Wasabae", "city": "Saigon", "ctry": "Vietnam", "where": "DJ set at Arcan, Saigon", "sound": "Acid, electro and techno territory", "p": "released", "also": ["restless"], "url": "https://www.youtube.com/watch?v=Q4Ua1VoPy6o", "plat": "YouTube", "bpm": 135, "rng": "130-140"}, {"n": "Jan Hagenkötter (Saigon Supersound)", "city": "Saigon / Germany", "ctry": "Vietnam", "where": "Le Mellotron radio", "sound": "A crackling excursion through pre-1975 Vietnamese pop", "p": "back-then", "also": ["nostalgic"], "url": "https://soundcloud.com/lemellotron/jan-hagenkotter-infracomsaigon-supersound", "plat": "SoundCloud", "bpm": 100, "rng": "80-120"}, {"n": "Achaya", "city": "Phnom Penh", "ctry": "Cambodia", "where": "Live at CUBIK (Phnom Penh Underground)", "sound": "Earthy, techy beats with natural sounds", "p": "awed", "also": ["drifting"], "url": "https://soundcloud.com/phnom-penh-underground/achaya-live-at-cubik-011218", "plat": "SoundCloud", "bpm": 120, "rng": "115-124"}, {"n": "ANGE", "city": "Phnom Penh", "ctry": "Cambodia", "where": "House set (Cambodia Community Radio)", "sound": "A house set for Cambodia Community Radio", "p": "easy", "also": ["bright"], "url": "https://soundcloud.com/angedj/house-set-cambodia-community-radio", "plat": "SoundCloud", "bpm": 122, "rng": "120-124"}, {"n": "dan (Shutter Rhythms)", "city": "Singapore", "ctry": "Singapore", "where": "dan, for Shutter Rhythms", "sound": "Elaine's pick for deep work, when there are too many tabs open", "p": "focused", "also": ["out-of-my-head"], "url": "https://soundcloud.com/shutter-rhythms/dan_mastered", "plat": "SoundCloud", "bpm": null, "rng": "not logged yet"}, {"n": "Traction Control", "city": "Kuala Lumpur", "ctry": "Malaysia", "where": "Traction Control on SoundCloud (profile)", "sound": "A. Danial, a KL producer and DJ working in electro", "p": "club-dancing", "also": ["focused"], "url": "https://soundcloud.com/tractioncontrol", "plat": "SoundCloud", "bpm": 128, "rng": "125-132"}];
+const GROUPS = [{"k": "dn", "n": "Let's dance", "ax": "joy, out loud"}, {"k": "ad", "n": "After dark", "ax": "slow, sensual"}, {"k": "si", "n": "Alone with it", "ax": "still, inward"}, {"k": "so", "n": "Soft company", "ax": "still, outward"}, {"k": "mi", "n": "Working through it", "ax": "moving, inward"}, {"k": "mo", "n": "Opening up", "ax": "moving, outward"}];
+const M = [{"id": "club-dancing", "n": "Club dancing", "l": "till the lights come on", "g": "dn", "m": "Strangers in the dark, one kick drum, nobody checking their phone.", "t": "1am", "s": "house, techno, UK garage, electro", "gd": "released", "st": "sad-but-dancing", "col": "#FF8A3D", "bpm": 128}, {"id": "living-room-dancing", "n": "Living room dancing", "l": "socks on the floor", "g": "dn", "m": "Furniture pushed back, curtains half drawn, terrible moves, perfect night.", "t": "Saturday, 9pm", "s": "disco edits, funk, Afrobeat, city pop", "gd": "shower-dancing", "st": "warm", "col": "#FFC857", "bpm": 116}, {"id": "bar-dancing", "n": "Bar dancing", "l": "one more round", "g": "dn", "m": "Drink in hand, shoulders going before your feet do.", "t": "11pm", "s": "boogie, Balearic, leftfield house", "gd": "table-dancing", "st": "slow-burn", "col": "#F7A072", "bpm": 118}, {"id": "table-dancing", "n": "Table dancing", "l": "gila-gila", "g": "dn", "m": "Shoes off, someone's on the table, the whole room is singing.", "t": "the peak of the night", "s": "budots, dangdut koplo, baile, ghetto house", "gd": "club-dancing", "st": "back-then", "col": "#FF5E5B", "bpm": 132}, {"id": "shower-dancing", "n": "Shower dancing", "l": "nobody's watching", "g": "dn", "m": "Steam, a towel and the chorus at full volume.", "t": "7.30am", "s": "nu-disco, funk, French house", "gd": "living-room-dancing", "st": "bright", "col": "#9EE6CF", "bpm": 120}, {"id": "slow-burn", "n": "Slow burn", "l": "pelan-pelan", "g": "ad", "m": "Taking your time. Low light, nothing rushed.", "t": "after midnight", "s": "slowed R&B, neo-soul, lovers rock", "gd": "sultry", "st": "tender", "col": "#D9467A", "bpm": 90}, {"id": "sultry", "n": "Sultry", "l": "panas", "g": "ad", "m": "Heat in the air and in the room. Getting ready to be looked at.", "t": "10pm", "s": "street soul, deep house, broken beat", "gd": "close", "st": "bar-dancing", "col": "#E8505B", "bpm": 104}, {"id": "close", "n": "Close", "l": "dekat", "g": "ad", "m": "Two people, one song, nobody else in the room.", "t": "2am", "s": "lovers rock, soul, slow jams", "gd": "slow-burn", "st": "yearning", "col": "#C04AB0", "bpm": 80}, {"id": "drifting", "n": "Drifting", "l": "half-awake", "g": "si", "m": "Nowhere to be yet. The fan turning, light coming in.", "t": "7am", "s": "ambient, downtempo, field recordings", "gd": "easy", "st": "awed", "col": "#8E8CF0", "bpm": 85}, {"id": "nostalgic", "n": "Nostalgic", "l": "that one year", "g": "si", "m": "A specific year of your life comes back. Uni, an old flat, a city you left.", "t": "scrolling old photos", "s": "trip-hop, 2000s R&B edits, indie edits", "gd": "yearning", "st": "back-then", "col": "#C9A6E8", "bpm": 95}, {"id": "yearning", "n": "Yearning", "l": "rindu", "g": "si", "m": "Wanting someone or somewhere far away. The ache of it.", "t": "late at night", "s": "dream pop, slow bossa, ambient", "gd": "tender", "st": "sad-but-dancing", "col": "#7C79F5", "bpm": 80}, {"id": "tender", "n": "Tender", "l": "2am", "g": "si", "m": "The thought you won't text. Soft, a bit exposed.", "t": "2am", "s": "soul, ambient piano, slowed R&B", "gd": "heavy", "st": "warm", "col": "#D6A6E8", "bpm": 75}, {"id": "numb", "n": "Numb", "l": "can't feel much", "g": "si", "m": "Nothing lands. Music to feel something, gently.", "t": "the end of a long week", "s": "dub techno, drone, minimal", "gd": "drifting", "st": "awed", "col": "#8A8A9E", "bpm": 70}, {"id": "heavy", "n": "Heavy", "l": "sitting with it", "g": "si", "m": "Grief or sadness you're letting be, not fixing.", "t": "any hour", "s": "drone, dub, modern classical", "gd": "tender", "st": "released", "col": "#6A5FC1", "bpm": 60}, {"id": "easy", "n": "Easy", "l": "lepak", "g": "so", "m": "Hanging out with no agenda. Kopi, void deck, friends.", "t": "late afternoon", "s": "disco edits, Balearic, jazz-funk", "gd": "cosy", "st": "bright", "col": "#6FD6C0", "bpm": 110}, {"id": "cosy", "n": "Cosy", "l": "hujan", "g": "so", "m": "The 4pm monsoon rain. The city slows and so do you.", "t": "4pm rain", "s": "dub, downtempo, city pop", "gd": "warm", "st": "yearning", "col": "#8CC4CF", "bpm": 75}, {"id": "back-then", "n": "Back then", "l": "childhood", "g": "so", "m": "Grandma's radio, Saturday cartoons, songs from a coffeeshop speaker.", "t": "Sunday lunch at your grandparents'", "s": "retro Mandopop and Cantopop, old Malay pop, molam, 80s city pop", "gd": "warm", "st": "nostalgic", "col": "#E8C47A", "bpm": 105}, {"id": "warm", "n": "Warm", "l": "senang hati", "g": "so", "m": "Belonging. Sunday dinner, everyone home.", "t": "Sunday evening", "s": "soul, highlife, gospel house", "gd": "awed", "st": "shiok", "col": "#F2B07A", "bpm": 110}, {"id": "lonely", "n": "Lonely", "l": "wanting company", "g": "so", "m": "The room is empty and you wish it wasn't. Let the music sit with you.", "t": "a weeknight, home alone", "s": "lovers rock, soul, lo-fi house", "gd": "cosy", "st": "close", "col": "#6FA8B6", "bpm": 78}, {"id": "awed", "n": "Awed", "l": "small, in a good way", "g": "so", "m": "East Coast at dusk. The sky does the talking.", "t": "dusk", "s": "organic house, ambient techno, spiritual jazz", "gd": "warm", "st": "released", "col": "#4FD1C5", "bpm": 118}, {"id": "focused", "n": "Focused", "l": "head down", "g": "mi", "m": "The work is flowing and you don't want words in the way.", "t": "10am", "s": "minimal, IDM, deep house", "gd": "restless", "st": "drifting", "col": "#E0A458", "bpm": 122}, {"id": "restless", "n": "Restless", "l": "sian", "g": "mi", "m": "The slump that won't settle. Can't sit, can't leave.", "t": "3pm", "s": "breaks, electro, broken beat", "gd": "tahan", "st": "playful", "col": "#F08A4B", "bpm": 130}, {"id": "out-of-my-head", "n": "Out of my head", "l": "too many tabs open", "g": "mi", "m": "Thoughts on loop. You need something louder than them.", "t": "lying awake, or mid-task", "s": "drum and bass, shoegaze, footwork", "gd": "focused", "st": "released", "col": "#FF6B3D", "bpm": 170}, {"id": "tahan", "n": "Tahan", "l": "enduring", "g": "mi", "m": "Steeling yourself. The long walk home after a long day.", "t": "the 7pm commute", "s": "dubstep, UK garage, steppers", "gd": "burning", "st": "shiok", "col": "#C8643B", "bpm": 140}, {"id": "burning", "n": "Burning", "l": "buay song", "g": "mi", "m": "Anger that needs somewhere to go.", "t": "after a bad meeting", "s": "hard techno, industrial, punk-funk", "gd": "released", "st": "heavy", "col": "#FF4E2A", "bpm": 148}, {"id": "bright", "n": "Bright", "l": "getting ready", "g": "mo", "m": "Light anticipation. Shower, outfit, one more song.", "t": "8pm", "s": "funk, Afrobeat, nu-disco", "gd": "playful", "st": "easy", "col": "#FFB4D0", "bpm": 118}, {"id": "playful", "n": "Playful", "l": "cheeky", "g": "mo", "m": "Silly, flirty, a little unserious.", "t": "Friday, 6pm", "s": "indie dance, space funk, baile", "gd": "shiok", "st": "restless", "col": "#FF7EB6", "bpm": 124}, {"id": "shiok", "n": "Shiok", "l": "euphoric", "g": "mo", "m": "Everyone together, everything landing at once.", "t": "midnight", "s": "house, disco, dangdut koplo edits", "gd": "released", "st": "warm", "col": "#FF4FA0", "bpm": 124}, {"id": "sad-but-dancing", "n": "Sad but dancing", "l": "crying on the dancefloor", "g": "mo", "m": "Heartbroken, but your body still wants to move.", "t": "1am", "s": "emotional house, UK garage, sad disco", "gd": "released", "st": "yearning", "col": "#D96BC0", "bpm": 130}, {"id": "released", "n": "Released", "l": "let go", "g": "mo", "m": "Losing yourself. The last hour of the night.", "t": "the last hour of the night", "s": "techno, jungle, gqom", "gd": "shiok", "st": "drifting", "col": "#FF2E88", "bpm": 135}];
+const BY = Object.fromEntries(M.map(m => [m.id, m]));
+const GBY = Object.fromEntries(GROUPS.map(g => [g.k, g]));
+const NAME2ID = Object.fromEntries(M.map(m => [m.n, m.id]));
+const CONTACT = ""; // add an Instagram handle or email to show on the suggest page
+const EMBED = true; // true only on your own hosting: Claude-hosted pages block outside players
+
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const BMIN = 50, BMAX = 180;
+const pos = b => Math.max(0, Math.min(100, (b - BMIN) / (BMAX - BMIN) * 100));
+
+/* ---------- scenes: one living picture per feeling, pulsing at its tempo ---------- */
+const cv = document.createElement("canvas"), ctx = cv.getContext("2d");
+cv.setAttribute("aria-hidden", "true");
+const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let W = 0, H = 0, S = {bpm: 96, col: "#EDE8DF", kind: "wave", kick: .3}, P = [], R = [], raf = 0, t0 = performance.now(), ptr = null, lastPh = 0, beatN = 0;
+const PAPER = "#EDE8DF";
+function rgba(hex, a){ const n = parseInt(hex.slice(1), 16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${Math.max(0, Math.min(1, a))})`; }
+const rnd = (a = 1, b) => b === undefined ? Math.random() * a : a + Math.random() * (b - a);
+const TAU = Math.PI * 2;
+const KIND = {
+ "club-dancing":"beams","living-room-dancing":"lamp","bar-dancing":"neon","table-dancing":"confetti","shower-dancing":"shower",
+ "slow-burn":"flame","sultry":"silk","close":"orbs",
+ "drifting":"sun","nostalgic":"film","yearning":"farlight","tender":"heart","numb":"fog","heavy":"ink",
+ "easy":"bubbles","cosy":"glass","back-then":"radio","warm":"bulbs","lonely":"block","awed":"stars",
+ "focused":"grid","restless":"jitter","out-of-my-head":"tabs","tahan":"march","burning":"embers",
+ "bright":"sparkle","playful":"bounce","shiok":"burst","sad-but-dancing":"disco","released":"tunnel"
+};
+function glow(x, y, r, col, a){ const g = ctx.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, rgba(col, a)); g.addColorStop(1, rgba(col, 0)); ctx.fillStyle = g; ctx.fillRect(x - r, y - r, r * 2, r * 2); }
+function seed(){
+  P = []; R = [];
+  const k = S.kind, n = (c) => { for (let i = 0; i < c; i++) P.push({x: rnd(W), y: rnd(H), r: rnd(), v: rnd(.4, 1.2), a: rnd(TAU), s: rnd(.5, 1.5)}); };
+  const counts = {beams:70, lamp:40, confetti:110, shower:90, film:70, farlight:110, bubbles:34, glass:60, stars:90, jitter:90, embers:70, sparkle:24, bounce:9, disco:50, fog:6, ink:0, tabs:0, march:0, neon:0, sun:0, flame:0, silk:0, orbs:0, heart:0, radio:40, bulbs:0, block:0, grid:0, burst:0, tunnel:0, wave:0};
+  n(counts[k] ?? 0);
+  if (k === "tabs") for (let i = 0; i < 9; i++) P.push({x: rnd(.1, .7) * W, y: rnd(.1, .6) * H, tx: 0, ty: 0, w: rnd(.25, .45) * W, h: rnd(.18, .3) * H, r: rnd()});
+  if (k === "ink") for (let i = 0; i < 4; i++) P.push({x: rnd(.15, .85) * W, y: 0, ty: rnd(.25, .6) * H, r0: rnd(10, 60), land: 1, a: rnd(.4, 1)});
+  if (k === "bounce") P.forEach(p => { p.y = rnd(.2, .7) * H; p.vx = rnd(-60, 60); p.vy = 0; p.rad = rnd(6, 16); });
+  if (k === "block") { const cols = 9, rows = 7; for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) P.push({c, r, lit: 0}); P[Math.floor(rnd(P.length))].lit = 1; }
+}
+function frame(now){
+  const t = (now - t0) / 1000, f = S.bpm / 60, ph = (t * f) % 1, col = S.col;
+  if (ph < lastPh) { beatN++; onBeat(); } lastPh = ph;
+  const kick = Math.exp(-ph * 6), soft = .5 + .5 * Math.sin(TAU * t * f / 4);
+  const e = S.kick * kick + (1 - S.kick) * soft;
+  ctx.clearRect(0, 0, W, H);
+  (DRAW[S.kind] || DRAW.wave)(t, f, ph, kick, e, col);
+  // touch ripples, on the beat
+  R = R.filter(r => t - r.t < 1.6);
+  R.forEach(r => { const a = Math.max(0, (t - r.t) / 1.6); ctx.strokeStyle = rgba(col, (1 - a) * .7); ctx.lineWidth = 1.5;
+    for (let j = 0; j < 3; j++) { const rr = Math.max(0, (a * 160 + j * 22) * (1 + kick * .15)); ctx.beginPath(); ctx.arc(r.x, r.y, rr, 0, TAU); ctx.stroke(); } });
+  if (ptr) glow(ptr.x, ptr.y, 90 + kick * 30, col, .16);
+  // the tempo line along the bottom, then fade into the page
+  wave(t, f, e, col, H * .86, Math.min(H * .07, 34));
+  const g = ctx.createLinearGradient(0, H * .62, 0, H); g.addColorStop(0, "rgba(11,11,14,0)"); g.addColorStop(1, "rgba(11,11,14,1)");
+  ctx.fillStyle = g; ctx.fillRect(0, H * .62, W, H * .38);
+}
+function wave(t, f, e, col, y0, ampMax){
+  const h = Math.max(0, Math.min(1, (S.bpm - 70) / 100)), k1 = 1.2 + S.bpm / 70, amp = ampMax * (.3 + .7 * e);
+  [[1, .8, 1.3], [.6, .25, 1]].forEach(([s, al, lw], li) => {
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 3) { const u = x / W, tp = Math.pow(Math.sin(Math.PI * u), 1.6);
+      const y = Math.sin(TAU * u * k1 - t * f * 1.3 + li) + .55 * h * Math.sin(TAU * u * k1 * 2.7 - t * f * 2.1);
+      const yy = y0 + y * amp * s * tp; x ? ctx.lineTo(x, yy) : ctx.moveTo(x, yy); }
+    ctx.strokeStyle = rgba(col, al); ctx.lineWidth = lw; ctx.stroke(); });
+}
+function onBeat(){
+  const k = S.kind;
+  if (k === "confetti" && beatN % 4 === 0) for (let i = 0; i < 26; i++) P.push({x: rnd(W), y: -10, r: rnd(), v: rnd(.6, 1.4), a: rnd(TAU), s: rnd(.5, 1.5)});
+  if (k === "confetti" && P.length > 200) P.splice(0, P.length - 200);
+  if (k === "ink" && beatN % 3 === 0) P.push({x: rnd(.15, .85) * W, y: -5, ty: rnd(.25, .6) * H, r0: 0, land: 0, a: 1});
+  if (k === "tabs") { const p = P[beatN % P.length]; p.x = rnd(.05, .6) * W; p.y = rnd(.05, .55) * H; }
+  if (k === "block" && beatN % 6 === 0) { const p = P[Math.floor(rnd(P.length))]; p.lit = p.lit ? 1 : .6; setTimeout(() => { if (p.lit === .6) p.lit = 0; }, 2600); }
+  if (k === "burst") P.push({born: (performance.now() - t0) / 1000});
+  if (k === "tunnel") P.push({born: (performance.now() - t0) / 1000});
+  if (k === "bounce") P.forEach(p => { if (p.y > H * .62) p.vy = -rnd(260, 420) * (S.bpm / 120); });
+}
+const DRAW = {
+ wave(t, f, ph, kick, e, col){ wave(t, f, e, col, H * .5, Math.min(H * .22, 80)); },
+ beams(t, f, ph, kick, e, col){
+  for (let i = 0; i < 6; i++) { const x0 = W * (i + .5) / 6, a = Math.sin(t * .6 + i * 1.7) * .55, len = H * 1.1;
+    const c = i % 2 ? col : PAPER; ctx.fillStyle = rgba(c, .05 + .16 * kick);
+    ctx.beginPath(); ctx.moveTo(x0, -5); ctx.lineTo(x0 + Math.sin(a - .08) * len, Math.cos(a - .08) * len); ctx.lineTo(x0 + Math.sin(a + .08) * len, Math.cos(a + .08) * len); ctx.fill(); }
+  P.forEach((p, i) => { const by = H * (.6 + .08 * p.r) - kick * 10 * p.s * (i % 3 ? 1 : .4);
+    ctx.fillStyle = rgba(PAPER, .25 + .35 * p.r); ctx.beginPath(); ctx.arc(p.x, by, 2.4 + p.r * 2, 0, TAU); ctx.fill(); });
+ },
+ lamp(t, f, ph, kick, e, col){
+  glow(W * .28, H * .3, Math.min(W, H) * (.55 + .05 * e), col, .32);
+  ctx.fillStyle = rgba(col, .9); ctx.beginPath(); ctx.moveTo(W * .22, H * .22); ctx.lineTo(W * .34, H * .22); ctx.lineTo(W * .31, H * .12); ctx.lineTo(W * .25, H * .12); ctx.fill();
+  for (let i = 0; i < 4; i++) { const x = W * (.72 + i * .06); ctx.strokeStyle = rgba(PAPER, .12); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 0);
+    ctx.bezierCurveTo(x + Math.sin(t * f * .5 + i) * 14, H * .25, x - Math.sin(t * f * .5 + i) * 14, H * .45, x + Math.sin(t * .7 + i) * 8, H * .62); ctx.stroke(); }
+  P.forEach(p => { p.y -= .15 * p.v; if (p.y < 0) p.y = H * .6; ctx.fillStyle = rgba(col, .25 + .4 * Math.abs(Math.sin(t + p.a))); ctx.fillRect(p.x + Math.sin(t + p.a) * 8, p.y - kick * 4, 1.6, 1.6); });
+ },
+ neon(t, f, ph, kick, e, col){
+  ctx.save(); ctx.shadowBlur = 18; ctx.shadowColor = col; ctx.lineWidth = 2.2;
+  const flick = Math.sin(t * 37) > .97 ? .2 : 1;
+  ctx.strokeStyle = rgba(col, (.5 + .5 * kick) * flick); ctx.beginPath(); ctx.arc(W * .32, H * .32, Math.min(W, H) * .16, 0, TAU); ctx.stroke();
+  ctx.strokeStyle = rgba(PAPER, .35 + .3 * (1 - kick)); ctx.beginPath(); ctx.roundRect ? ctx.roundRect(W * .52, H * .14, W * .34, H * .3, 14) : ctx.rect(W * .52, H * .14, W * .34, H * .3); ctx.stroke();
+  ctx.strokeStyle = rgba(col, .4 + .4 * kick); ctx.beginPath(); ctx.moveTo(W * .6, H * .52); ctx.lineTo(W * .66, H * .38); ctx.lineTo(W * .72, H * .52); ctx.closePath(); ctx.stroke();
+  ctx.restore();
+ },
+ confetti(t, f, ph, kick, e, col){
+  const cols = [col, PAPER, "#FFC857", "#9EE6CF"];
+  P.forEach((p, i) => { p.y += (1.2 + p.v * 1.4) * (1 + kick); p.x += Math.sin(t * 2 + p.a) * .6; if (p.y > H * .8) { p.y = -10; p.x = rnd(W); }
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(t * 3 * p.s + p.a); ctx.fillStyle = rgba(cols[i % 4], .85); ctx.fillRect(-4, -2, 8, 4); ctx.restore(); });
+ },
+ shower(t, f, ph, kick, e, col){
+  for (let i = 0; i < 5; i++) glow(W * (.15 + i * .18), H * (.55 - ((t * .03 + i * .2) % .6)), Math.min(W, H) * .3, PAPER, .07);
+  ctx.strokeStyle = rgba(col, .55); ctx.lineWidth = 1.2; ctx.beginPath();
+  P.forEach(p => { p.y += 7 * p.v + kick * 2; if (p.y > H * .78) { p.y = -10; p.x = rnd(W); } ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 1, p.y + 10 * p.v); }); ctx.stroke();
+ },
+ flame(t, f, ph, kick, e, col){
+  const cx = W * .5, cy = H * .5, fl = 1 + .08 * Math.sin(t * 13) + .06 * e;
+  glow(cx, cy - 30, Math.min(W, H) * (.45 + .05 * e), col, .28);
+  ctx.fillStyle = rgba("#FFD7A8", .95); ctx.beginPath(); ctx.moveTo(cx, cy - 62 * fl);
+  ctx.bezierCurveTo(cx + 22, cy - 30, cx + 16, cy, cx, cy + 4); ctx.bezierCurveTo(cx - 16, cy, cx - 22, cy - 30, cx + Math.sin(t * 3) * 3, cy - 62 * fl); ctx.fill();
+  ctx.fillStyle = rgba(PAPER, .2); ctx.fillRect(cx - 14, cy + 6, 28, H * .25);
+  ctx.strokeStyle = rgba(PAPER, .1); ctx.beginPath(); ctx.moveTo(cx, cy - 66); for (let y = 0; y < 90; y += 6) ctx.lineTo(cx + Math.sin(t * 1.5 + y * .08) * (y * .25), cy - 66 - y); ctx.stroke();
+ },
+ silk(t, f, ph, kick, e, col){
+  for (let i = 0; i < 5; i++) { ctx.beginPath(); const yb = H * (.18 + i * .1);
+    for (let x = 0; x <= W; x += 6) { const y = yb + Math.sin(x / W * TAU * 1.2 + t * f * .35 + i) * 30 * (1 + .3 * e); x ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
+    for (let x = W; x >= 0; x -= 6) { const y = yb + 26 + Math.sin(x / W * TAU * 1.2 + t * f * .35 + i + .5) * 34; ctx.lineTo(x, y); }
+    ctx.fillStyle = rgba(i % 2 ? col : "#7A1F3D", .14 + .04 * i); ctx.fill(); }
+ },
+ orbs(t, f, ph, kick, e, col){
+  const cx = W * .5, cy = H * .36, d = Math.min(W, H) * (.08 + .1 * (.5 + .5 * Math.sin(t * .25))), a = t * .35;
+  [[1, col], [-1, "#F6B3C8"]].forEach(([s, c]) => { const x = cx + Math.cos(a) * d * s, y = cy + Math.sin(a) * d * s * .6;
+    glow(x, y, 80 + 14 * e, c, .45); ctx.fillStyle = rgba(c, .9); ctx.beginPath(); ctx.arc(x, y, 7 + 2 * e, 0, TAU); ctx.fill(); });
+ },
+ sun(t, f, ph, kick, e, col){
+  const y = H * (.52 - .1 * Math.sin(t * .05)); glow(W * .5, y, Math.min(W, H) * .6, col, .22);
+  ctx.fillStyle = rgba("#F2C4A0", .85); ctx.beginPath(); ctx.arc(W * .5, y, Math.min(W, H) * .11, 0, TAU); ctx.fill();
+  ctx.fillStyle = "rgba(11,11,14,1)"; ctx.fillRect(0, H * .55, W, H);
+  for (let i = 0; i < 6; i++) { const yy = H * .55 + i * i * 4 + 4; ctx.strokeStyle = rgba(col, .4 - i * .05); ctx.beginPath(); ctx.moveTo(W * (.5 - .3 + i * .03), yy); ctx.lineTo(W * (.5 + .3 - i * .03), yy); ctx.stroke(); }
+ },
+ film(t, f, ph, kick, e, col){
+  glow(W * (.1 + .05 * Math.sin(t * .3)), H * .2, W * .5, "#F2A65A", .22); glow(W * .9, H * (.5 + .1 * Math.sin(t * .2)), W * .45, col, .22);
+  ctx.strokeStyle = rgba(PAPER, .22); ctx.lineWidth = 1; ctx.strokeRect(W * .08, H * .08, W * .84, H * .56);
+  for (let i = 0; i < 9; i++) { ctx.fillStyle = rgba(PAPER, .14); ctx.fillRect(W * (.12 + i * .09), H * .03, W * .04, H * .025); ctx.fillRect(W * (.12 + i * .09), H * .66, W * .04, H * .025); }
+  ctx.fillStyle = rgba(PAPER, .08); for (let i = 0; i < 260; i++) ctx.fillRect(rnd(W), rnd(H * .7), 1.2, 1.2);
+  if (Math.random() < .04) { ctx.fillStyle = rgba(PAPER, .05); ctx.fillRect(0, 0, W, H); }
+ },
+ farlight(t, f, ph, kick, e, col){
+  const x = W * .66, y = H * .5; glow(x, y, 120 + 20 * e, "#FFD9A0", .32); ctx.fillStyle = rgba("#FFE7C2", .95); ctx.beginPath(); ctx.arc(x, y, 2.5, 0, TAU); ctx.fill();
+  ctx.strokeStyle = rgba(PAPER, .06); ctx.beginPath(); ctx.moveTo(0, y + 6); ctx.lineTo(W, y + 6); ctx.stroke();
+  ctx.strokeStyle = rgba(col, .4); ctx.lineWidth = 1; ctx.beginPath();
+  P.forEach(p => { p.y += 2.4 * p.v; p.x -= .5 * p.v; if (p.y > H * .8) { p.y = -10; p.x = rnd(W * 1.2); } ctx.moveTo(p.x, p.y); ctx.lineTo(p.x - 2, p.y + 9); }); ctx.stroke();
+ },
+ heart(t, f, ph, kick, e, col){
+  const beat = Math.exp(-ph * 9) + .6 * Math.exp(-Math.max(0, ph - .22) * 12) * (ph > .22);
+  for (let i = 4; i >= 0; i--) glow(W * .5, H * .36, (60 + i * 38) * (1 + .12 * beat), col, .1 + .08 * beat);
+  ctx.fillStyle = rgba("#FFE1F0", .8); ctx.beginPath(); ctx.arc(W * .5, H * .36, 5 + 3 * beat, 0, TAU); ctx.fill();
+ },
+ fog(t, f, ph, kick, e, col){
+  P.forEach((p, i) => { const y = H * (.12 + i * .1), x = ((p.x + t * 8 * p.v) % (W * 1.6)) - W * .3;
+    ctx.fillStyle = rgba(i % 2 ? col : PAPER, .05); ctx.beginPath(); ctx.ellipse(x, y, W * .6, 26 + 8 * p.r, 0, 0, TAU); ctx.fill(); });
+ },
+ ink(t, f, ph, kick, e, col){
+  P = P.filter(p => p.a > .02);
+  P.forEach(p => { if (!p.land) { p.y += 1.6; ctx.fillStyle = rgba(col, .9); ctx.beginPath(); ctx.arc(p.x, p.y, 2.2, 0, TAU); ctx.fill(); if (p.y >= p.ty) p.land = 1; }
+    else { p.r0 += .45; p.a *= .993; ctx.strokeStyle = rgba(col, p.a * .6); ctx.lineWidth = 1; ctx.beginPath(); ctx.ellipse(p.x, p.ty, p.r0 * 2, p.r0 * .5, 0, 0, TAU); ctx.stroke(); } });
+ },
+ bubbles(t, f, ph, kick, e, col){
+  P.forEach(p => { p.y -= .6 * p.v; if (p.y < -20) { p.y = H * .7; p.x = rnd(W); }
+    if (ptr && Math.hypot(ptr.x - p.x, ptr.y - p.y) < 70) p.x += (p.x - ptr.x) * .06;
+    ctx.strokeStyle = rgba(p.r > .5 ? col : PAPER, .5); ctx.lineWidth = 1; ctx.beginPath(); ctx.arc(p.x + Math.sin(t + p.a) * 6, p.y, 4 + p.r * 12 * (1 + .1 * e), 0, TAU); ctx.stroke(); });
+ },
+ glass(t, f, ph, kick, e, col){
+  ["#F2B07A", col, "#FFE1A8", col].forEach((c, i) => glow(W * (.2 + i * .22), H * (.35 + .1 * Math.sin(i)), 60, c, .25));
+  P.forEach(p => { if (p.r > .85) { p.y += .7 * p.v; if (p.y > H * .75) { p.y = 0; p.x = rnd(W); } }
+    ctx.fillStyle = rgba(PAPER, .35); ctx.beginPath(); ctx.ellipse(p.x, p.y, 1.5 + p.s, 2 + p.s * 1.4, 0, 0, TAU); ctx.fill(); });
+ },
+ radio(t, f, ph, kick, e, col){
+  const y = H * .36, x0 = W * .1, x1 = W * .9; ctx.strokeStyle = rgba(PAPER, .3); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x0, y); ctx.lineTo(x1, y); ctx.stroke();
+  for (let i = 0; i <= 40; i++) { const x = x0 + (x1 - x0) * i / 40, h = i % 5 ? 6 : 14; ctx.beginPath(); ctx.moveTo(x, y - h); ctx.lineTo(x, y); ctx.stroke(); }
+  ctx.font = "11px IBM Plex Mono, monospace"; ctx.fillStyle = rgba(PAPER, .4); ["88", "92", "96", "100", "104", "108"].forEach((s, i) => ctx.fillText(s, x0 + (x1 - x0) * i / 5 - 8, y + 20));
+  const nx = x0 + (x1 - x0) * (.5 + .4 * Math.sin(t * .18)); ctx.strokeStyle = rgba(col, .95); ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(nx, y - 34); ctx.lineTo(nx, y + 6); ctx.stroke();
+  glow(nx, y - 14, 60, col, .25 + .15 * e);
+  ctx.fillStyle = rgba(PAPER, .07); for (let i = 0; i < 160; i++) ctx.fillRect(rnd(W), rnd(H * .7), 1, 1);
+ },
+ bulbs(t, f, ph, kick, e, col){
+  [[.12, .55], [.3, .7]].forEach(([y0, sag], li) => { ctx.strokeStyle = rgba(PAPER, .15); ctx.beginPath();
+    for (let i = 0; i <= 40; i++) { const u = i / 40, x = u * W, y = H * y0 + Math.sin(Math.PI * u) * H * .14 * sag + Math.sin(t * .8 + li) * 3; i ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.stroke();
+    for (let i = 1; i < 12; i++) { const u = i / 12, x = u * W, y = H * y0 + Math.sin(Math.PI * u) * H * .14 * sag + Math.sin(t * .8 + li) * 3 + 6;
+      const tw = .55 + .45 * Math.sin(t * 2 + i * 1.3 + li) * (1 - kick * .3); glow(x, y, 26, col, .3 * tw); ctx.fillStyle = rgba("#FFE1A8", .7 * tw + .2); ctx.beginPath(); ctx.arc(x, y, 3, 0, TAU); ctx.fill(); } });
+ },
+ block(t, f, ph, kick, e, col){
+  const cols = 9, rows = 7, bw = W * .62, bh = H * .5, x0 = W * .19, y0 = H * .1, cw = bw / cols, ch = bh / rows;
+  ctx.strokeStyle = rgba(PAPER, .1); ctx.strokeRect(x0 - 6, y0 - 6, bw + 12, bh + 12);
+  P.forEach(p => { const x = x0 + p.c * cw + 3, y = y0 + p.r * ch + 3;
+    if (p.lit) { glow(x + cw / 2, y + ch / 2, 40, "#FFD79A", .25 * p.lit); ctx.fillStyle = rgba("#FFD79A", .75 * p.lit); ctx.fillRect(x, y, cw - 6, ch - 6); }
+    else { ctx.strokeStyle = rgba(PAPER, .08); ctx.strokeRect(x, y, cw - 6, ch - 6); } });
+ },
+ stars(t, f, ph, kick, e, col){
+  const g = ctx.createLinearGradient(0, 0, 0, H * .6); g.addColorStop(0, "rgba(11,11,14,0)"); g.addColorStop(1, rgba("#F9C784", .28)); ctx.fillStyle = g; ctx.fillRect(0, 0, W, H * .6);
+  P.forEach(p => { if (p.y < H * .55) { ctx.fillStyle = rgba(PAPER, .2 + .6 * Math.abs(Math.sin(t * .8 * p.s + p.a))); ctx.fillRect(p.x, p.y, 1.5, 1.5); } });
+  for (let i = 0; i < 18; i++) { const y = H * .6 + i * 5; ctx.strokeStyle = rgba(col, .25 - i * .012); const w = W * (.06 + .1 * Math.abs(Math.sin(t * 1.2 + i))); ctx.beginPath(); ctx.moveTo(W * .5 - w, y); ctx.lineTo(W * .5 + w, y); ctx.stroke(); }
+ },
+ grid(t, f, ph, kick, e, col){
+  const hz = H * .3, cx = W * .5; ctx.strokeStyle = rgba(col, .35); ctx.lineWidth = 1;
+  for (let i = -10; i <= 10; i++) { ctx.beginPath(); ctx.moveTo(cx + i * 6, hz); ctx.lineTo(cx + i * W * .16, H); ctx.stroke(); }
+  for (let j = 0; j < 12; j++) { const z = ((j + t * f * .5) % 12) / 12, y = hz + (H - hz) * z * z; ctx.strokeStyle = rgba(col, .1 + .4 * z); ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+  glow(cx, hz, 120, PAPER, .12 + .1 * e);
+ },
+ jitter(t, f, ph, kick, e, col){
+  P.forEach(p => { p.x += rnd(-1, 1) * (1.5 + 5 * kick); p.y += rnd(-1, 1) * (1.5 + 5 * kick);
+    if (ptr) { const d = Math.hypot(p.x - ptr.x, p.y - ptr.y); if (d < 90) { p.x += (p.x - ptr.x) / d * 4; p.y += (p.y - ptr.y) / d * 4; } }
+    p.x = (p.x + W) % W; p.y = Math.max(0, Math.min(H * .75, p.y)); ctx.fillStyle = rgba(p.r > .6 ? col : PAPER, .6); ctx.fillRect(p.x, p.y, 2.5, 2.5); });
+ },
+ tabs(t, f, ph, kick, e, col){
+  P.forEach((p, i) => { p.tx += (p.x - p.tx) * .12; p.ty += (p.y - p.ty) * .12;
+    ctx.fillStyle = "rgba(11,11,14,.92)"; ctx.strokeStyle = rgba(i === beatN % P.length ? col : PAPER, i === beatN % P.length ? .9 : .28); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.rect(p.tx, p.ty + 14, p.w, p.h); ctx.fill(); ctx.stroke();
+    ctx.beginPath(); ctx.rect(p.tx + 8, p.ty, p.w * .32, 14); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = rgba(PAPER, .18); for (let l = 0; l < 3; l++) ctx.fillRect(p.tx + 12, p.ty + 30 + l * 12, p.w * (.5 - l * .1), 3); });
+ },
+ march(t, f, ph, kick, e, col){
+  const n = 28, step = W / n, off = (t * f * step) % step;
+  for (let i = -1; i < n + 1; i++) { const x = i * step - off, idx = Math.floor(i + t * f), h = H * (.12 + .3 * Math.abs(Math.sin(idx * 1.7)));
+    ctx.fillStyle = rgba(idx % 4 === 0 ? col : PAPER, idx % 4 === 0 ? .7 : .18); ctx.fillRect(x, H * .66 - h * (1 + .08 * kick), step * .45, h * (1 + .08 * kick)); }
+ },
+ embers(t, f, ph, kick, e, col){
+  glow(W * .5, H * .8, W * .7, col, .3 + .15 * e);
+  P.forEach(p => { p.y -= (1 + p.v * 2) * (1 + kick); p.x += Math.sin(t * 2 + p.a) * .8; if (p.y < 0) { p.y = H * .78; p.x = rnd(W); }
+    const a = p.y / H; ctx.fillStyle = rgba(p.r > .5 ? "#FFB347" : col, a); ctx.fillRect(p.x, p.y, 2 + p.r * 2, 2 + p.r * 2); });
+ },
+ sparkle(t, f, ph, kick, e, col){
+  P.forEach(p => { const life = (t * f * .5 + p.a) % 1; if (life < .02) { p.x = rnd(W); p.y = rnd(H * .7); }
+    const s = Math.sin(Math.PI * life) * (6 + p.r * 10); ctx.strokeStyle = rgba(p.r > .5 ? col : "#FFE3A3", Math.sin(Math.PI * life)); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(p.x - s, p.y); ctx.lineTo(p.x + s, p.y); ctx.moveTo(p.x, p.y - s); ctx.lineTo(p.x, p.y + s); ctx.stroke(); });
+ },
+ bounce(t, f, ph, kick, e, col){
+  const dt = 1 / 60, floor = H * .66;
+  P.forEach((p, i) => { p.vy += 900 * dt; p.x += p.vx * dt; p.y += p.vy * dt; if (p.y > floor - p.rad) { p.y = floor - p.rad; p.vy *= -.35; }
+    if (p.x < p.rad || p.x > W - p.rad) p.vx *= -1; if (ptr && Math.hypot(ptr.x - p.x, ptr.y - p.y) < 40) { p.vy = -400; p.vx += rnd(-80, 80); }
+    ctx.fillStyle = rgba([col, "#9BE7FF", "#FFE3A3"][i % 3], .9); ctx.beginPath(); ctx.arc(p.x, p.y, p.rad, 0, TAU); ctx.fill(); });
+  ctx.strokeStyle = rgba(PAPER, .15); ctx.beginPath(); ctx.moveTo(0, floor); ctx.lineTo(W, floor); ctx.stroke();
+ },
+ burst(t, f, ph, kick, e, col){
+  const now = t; P = P.filter(p => now - p.born < 1.5);
+  P.forEach((p, j) => { const a = (now - p.born) / 1.5, r = a * Math.max(W, H) * .6;
+    for (let i = 0; i < 24; i++) { const ang = i / 24 * TAU + j * .13; ctx.strokeStyle = rgba(i % 2 ? col : "#FFD166", (1 - a) * .8); ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(W * .5 + Math.cos(ang) * r * .6, H * .35 + Math.sin(ang) * r * .6); ctx.lineTo(W * .5 + Math.cos(ang) * r, H * .35 + Math.sin(ang) * r); ctx.stroke(); } });
+  glow(W * .5, H * .35, 90 + 40 * kick, col, .4);
+ },
+ disco(t, f, ph, kick, e, col){
+  const cx = W * .5, cy = H * .2, rad = Math.min(W, H) * .1; ctx.fillStyle = rgba(PAPER, .12); ctx.beginPath(); ctx.arc(cx, cy, rad, 0, TAU); ctx.fill();
+  ctx.strokeStyle = rgba(PAPER, .3); for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.ellipse(cx, cy, rad * Math.abs(Math.cos(t * .5 + i * .45)), rad, 0, 0, TAU); ctx.stroke(); }
+  P.forEach(p => { const ang = p.a + t * .4, d = p.r * Math.max(W, H) * .7, x = cx + Math.cos(ang) * d, y = cy + Math.abs(Math.sin(ang)) * d;
+    ctx.fillStyle = rgba(p.r > .5 ? col : "#9EB0FF", .3 + .5 * kick); ctx.fillRect(x, y, 3, 3); });
+  ctx.strokeStyle = rgba("#5B6CFF", .3); ctx.beginPath(); for (let i = 0; i < 40; i++) { const x = (i * 37 + t * 40) % W, y = (i * 53 + t * 220) % (H * .75); ctx.moveTo(x, y); ctx.lineTo(x - 1, y + 8); } ctx.stroke();
+ },
+ tunnel(t, f, ph, kick, e, col){
+  const now = t; P = P.filter(p => now - p.born < 2.2);
+  P.forEach(p => { const a = (now - p.born) / 2.2, s = a * a; ctx.strokeStyle = rgba(col, (1 - a) * .9); ctx.lineWidth = 1 + 3 * s;
+    ctx.strokeRect(W * .5 - W * .7 * s, H * .38 - H * .6 * s, W * 1.4 * s, H * 1.2 * s); });
+  glow(W * .5, H * .38, 70 + 30 * kick, PAPER, .25);
+ },
+};
+function sizeScene(){
+  const host = cv.parentElement; if (!host) return;
+  const d = Math.min(devicePixelRatio || 1, 2); W = host.clientWidth; H = host.clientHeight;
+  cv.width = W * d; cv.height = H * d; cv.style.width = W + "px"; cv.style.height = H + "px"; ctx.setTransform(d, 0, 0, d, 0, 0);
+}
+function loop(now){ frame(now); raf = requestAnimationFrame(loop); }
+function mountScene(host, opts){
+  S = {...S, ...opts}; host.appendChild(cv); sizeScene(); seed(); lastPh = 0;
+  document.documentElement.style.setProperty("--a", S.col);
+  cancelAnimationFrame(raf);
+  if (still || document.hidden) frame(performance.now()); else raf = requestAnimationFrame(loop);
+}
+cv.addEventListener("pointermove", e => { const r = cv.getBoundingClientRect(); ptr = {x: e.clientX - r.left, y: e.clientY - r.top}; });
+cv.addEventListener("pointerleave", () => { ptr = null; });
+cv.addEventListener("pointerdown", e => { const r = cv.getBoundingClientRect(); const x = e.clientX - r.left, y = e.clientY - r.top;
+  R.push({x, y, t: (performance.now() - t0) / 1000}); if (S.kind === "tabs") P.forEach(p => { p.x = rnd(.05, .6) * W; p.y = rnd(.05, .55) * H; });
+  if (still) frame(performance.now()); });
+document.addEventListener("visibilitychange", () => { if (document.hidden) cancelAnimationFrame(raf); else if (!still) { cancelAnimationFrame(raf); raf = requestAnimationFrame(loop); } });
+addEventListener("resize", () => { sizeScene(); seed(); });
+const kickFor = m => ({dn: 1, mo: .85, mi: .7, ad: .25, so: .3, si: .12})[m.g];
+
+/* ---------- views ---------- */
+const app = document.getElementById("app");
+let order = "feeling";
+function suggestion(){
+  const d = new Date(), h = d.getHours(), wk = d.getDay() === 0 || d.getDay() === 6;
+  const wd = ["tender","close","yearning","yearning","drifting","drifting","drifting","shower-dancing","focused","focused","focused","focused","easy","easy","out-of-my-head","restless","cosy","cosy","tahan","bar-dancing","bright","living-room-dancing","lonely","slow-burn"];
+  const we = ["club-dancing","club-dancing","sad-but-dancing","released","nostalgic","drifting","drifting","drifting","shower-dancing","drifting","easy","back-then","back-then","back-then","easy","easy","living-room-dancing","awed","awed","sultry","bar-dancing","table-dancing","club-dancing","club-dancing"];
+  return BY[(wk ? we : wd)[h]];
+}
+function rowHTML(m){
+  return `<a class="row" href="#${m.id}" style="--c:${m.col}">
+    <span><b>${esc(m.n)}</b><small>${esc(m.l)}</small></span>
+    <span class="bpm">${m.bpm} bpm<i style="width:${Math.round(pos(m.bpm) * .5) + 6}px;margin-left:auto"></i></span></a>`;
+}
+function home(){
+  const s = suggestion();
+  const when = new Date().toLocaleString("en-GB", {weekday:"long", hour:"numeric", minute:"2-digit"});
+  const body = order === "feeling"
+    ? GROUPS.map(g => `<section class="group" aria-label="${esc(g.n)}"><h2>${esc(g.n)}<span>${esc(g.ax)}</span></h2>
+        <div class="rows">${M.filter(m => m.g === g.k).map(rowHTML).join("")}</div></section>`).join("")
+    : `<section class="group" aria-label="All feelings by tempo"><h2>slowest to fastest<span>estimated bpm</span></h2>
+        <div class="rows">${M.slice().sort((a, b) => a.bpm - b.bpm).map(rowHTML).join("")}</div></section>`;
+  app.innerHTML = `<section class="view">
+    <div class="scene" id="sc"><span class="hint">tap · ${s.bpm} bpm</span></div>
+    <h1 class="hero">How are you, right now?</h1>
+    <p class="nudge">It's ${esc(when)}. Maybe you're <a href="#${s.id}">${esc(s.n)}</a>?</p>
+    <div class="toggle" role="group" aria-label="Order feelings">
+      <button type="button" data-o="feeling" aria-pressed="${order === "feeling"}">by feeling</button>
+      <button type="button" data-o="tempo" aria-pressed="${order === "tempo"}">by tempo</button>
+    </div>
+    ${body}
+  </section>`;
+  mountScene(document.getElementById("sc"), {bpm: s.bpm, col: "#EDE8DF", kick: kickFor(s), kind: "wave"});
+  app.querySelectorAll(".toggle button").forEach(b => b.addEventListener("click", () => { order = b.dataset.o; home(); }));
+}
+function hashN(str){ let h = 2166136261; for (const c of str) { h ^= c.charCodeAt(0); h = Math.imul(h, 16777619); } return h >>> 0; }
+function bars(s, fallback){
+  const b = s.bpm || fallback, beat = (60 / b).toFixed(3), N = 32;
+  let r = hashN(s.n), out = "";
+  for (let i = 0; i < N; i++) {
+    r = Math.imul(r ^ (r >>> 15), 2246822519) >>> 0;
+    const hgt = 25 + (r % 75) * Math.pow(Math.sin(Math.PI * (i + .5) / N), .6);
+    out += `<i style="height:${Math.round(hgt)}%;--d:${(i / N * 60 / b).toFixed(3)}"></i>`;
+  }
+  return `<div class="bars" style="--beat:${beat}s" aria-hidden="true">${out}</div>`;
+}
+function card(s, m){
+  const verb = s.plat === "YouTube" ? "Watch the set on YouTube" : (s.n === "Traction Control" ? "Hear Traction Control on SoundCloud" : "Listen to the set on SoundCloud");
+  const tempo = s.bpm ? `≈${s.bpm} bpm<em>${esc(s.rng)} · est.</em>` : `tempo<em>not logged yet</em>`;
+  return `<article class="set">
+    <div class="set-top">
+      <div class="who">${esc(s.n)}<span>${esc(s.city)}${s.city !== s.ctry ? " · " + esc(s.ctry) : ""}</span></div>
+      <div class="sbpm">${tempo}</div>
+    </div>
+    ${bars(s, m.bpm)}
+    <p class="sound">${esc(s.sound)}</p>
+    <p class="where">${esc(s.where)}</p>
+    <div class="acts">
+      ${EMBED && previewable(s) ? `<button class="pvbtn" type="button" data-pv="${SETS.indexOf(s)}"><span aria-hidden="true">▶</span> 30s preview</button>` : ""}
+      <a class="go" href="${esc(s.url)}" target="_blank" rel="noopener">${verb} <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="pvslot"></div>
+  </article>`;
+}
+/* ---------- doors: other feelings floating inside the scene ---------- */
+function doors(m){
+  const g = BY[m.gd], x = BY[m.st];
+  const pool = M.filter(o => o.g !== m.g && o.id !== g.id && o.id !== x.id);
+  const w = pool[Math.floor(Math.random() * pool.length)];
+  const L = "max(22px,calc(50vw - 288px))";
+  const spots = [`left:${L};top:16%`, `right:${L};top:38%`, `left:calc(${L} + 18%);top:60%`];
+  return [[g, "gently"], [x, "a stretch"], [w, "somewhere else"]].map(([o, how], i) =>
+    `<a class="door" href="#${o.id}" style="--c:${o.col};--dl:${-i * 2.3}s;${spots[i]}">${esc(o.n)}<i>${how} · ${o.bpm} bpm</i></a>`).join("");
+}
+/* ---------- 30-second previews (only where official players are allowed) ---------- */
+let pvTimer = 0, pvOpen = null;
+function ytId(u){ const m = u.match(/(?:v=|youtu\.be\/|\/live\/|\/embed\/)([\w-]{11})/); return m ? m[1] : null; }
+function previewable(s){ return s.plat === "YouTube" ? !!ytId(s.url) : /soundcloud\.com\/[^/]+\/[^/?#]+/.test(s.url) && !/\/sets\//.test(s.url); }
+function startAt(s){ return /15-?min/i.test(s.where) ? 240 : s.plat === "YouTube" ? 300 : 600; }
+function stopPreview(){
+  clearInterval(pvTimer);
+  if (pvOpen) { pvOpen.slot.innerHTML = ""; pvOpen.btn.innerHTML = '<span aria-hidden="true">▶</span> 30s preview'; pvOpen.btn.setAttribute("aria-pressed", "false"); pvOpen = null; }
+}
+let scApi = null;
+function loadSC(){ return scApi || (scApi = new Promise((ok, no) => { const sc = document.createElement("script"); sc.src = "https://w.soundcloud.com/player/api.js"; sc.onload = () => ok(window.SC); sc.onerror = no; document.head.appendChild(sc); })); }
+function runClock(slot, s, onEnd){
+  const bar = slot.querySelector(".pvbar i"), note = slot.querySelector(".pvnote"), t0 = Date.now();
+  clearInterval(pvTimer);
+  pvTimer = setInterval(() => {
+    const el = (Date.now() - t0) / 1000; bar.style.width = Math.min(100, el / 30 * 100) + "%";
+    note.textContent = `preview · ${Math.max(0, Math.ceil(30 - el))}s left`;
+    if (el >= 30) { clearInterval(pvTimer); onEnd(); }
+  }, 250);
+}
+function openPreview(btn, s){
+  if (pvOpen && pvOpen.btn === btn) { stopPreview(); return; }
+  stopPreview();
+  const slot = btn.closest(".set").querySelector(".pvslot"), st = startAt(s);
+  btn.innerHTML = '<span aria-hidden="true">■</span> stop preview'; btn.setAttribute("aria-pressed", "true");
+  pvOpen = {btn, slot};
+  const done = () => { if (pvOpen && pvOpen.slot === slot) { stopPreview();
+    slot.innerHTML = `<p class="pvnote">That was 30 seconds. <a href="${esc(s.url)}" target="_blank" rel="noopener">The whole set is on ${esc(s.plat)} ↗</a></p>`; } };
+  if (s.plat === "YouTube") {
+    const id = ytId(s.url);
+    slot.innerHTML = `<div class="pv"><iframe class="yt" title="30-second preview of ${esc(s.n)}" src="https://www.youtube-nocookie.com/embed/${id}?start=${st}&end=${st + 30}&autoplay=1&playsinline=1&rel=0&modestbranding=1" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe><div class="pvbar"><i></i></div><p class="pvnote">loading…</p></div>`;
+    slot.querySelector("iframe").addEventListener("load", () => runClock(slot, s, done), {once: true});
+  } else {
+    const u = s.url.replace("//m.soundcloud.com", "//soundcloud.com").split("?")[0];
+    const col = getComputedStyle(document.documentElement).getPropertyValue("--a").trim().replace("#", "");
+    slot.innerHTML = `<div class="pv"><iframe class="sc" title="30-second preview of ${esc(s.n)}" allow="autoplay" src="https://w.soundcloud.com/player/?url=${encodeURIComponent(u)}&color=%23${col}&auto_play=false&visual=false&hide_related=true&show_comments=false&show_reposts=false&show_teaser=false"></iframe><div class="pvbar"><i></i></div><p class="pvnote">loading…</p></div>`;
+    const fr = slot.querySelector("iframe");
+    loadSC().then(SC => {
+      const w = SC.Widget(fr); let started = false;
+      w.bind(SC.Widget.Events.READY, () => w.getDuration(d => { w.seekTo(Math.min(st * 1000, d * .25)); w.play(); }));
+      w.bind(SC.Widget.Events.PLAY, () => { if (!started) { started = true; runClock(slot, s, () => { try { w.pause(); } catch {} done(); }); } });
+      setTimeout(() => { if (!started && pvOpen && pvOpen.slot === slot) slot.querySelector(".pvnote").textContent = "press play on the player to start the preview"; }, 3500);
+    }).catch(() => { slot.querySelector(".pvnote").textContent = "the SoundCloud player didn't load. Use the link instead."; });
+  }
+}
+function wirePreviews(m){
+  app.querySelectorAll("[data-pv]").forEach(b => b.addEventListener("click", () => openPreview(b, SETS[+b.dataset.pv])));
+}
+function mood(m){
+  stopPreview();
+  const prim = shuffle(SETS.filter(s => s.p === m.id));
+  const also = shuffle(SETS.filter(s => s.p !== m.id && s.also.includes(m.id))).slice(0, 6);
+  const g = BY[m.gd], x = BY[m.st], G = GBY[m.g];
+  app.innerHTML = `<section class="view">
+    <a class="back" href="#feelings">← all feelings</a>
+    <div class="scene big" id="sc" aria-label="A moving picture of ${esc(m.n)}, pulsing at about ${m.bpm} beats per minute. Tap it.">
+      <span class="hint">tap anywhere · ${m.bpm} bpm</span>
+      ${doors(m)}
+    </div>
+    <div class="mtop">
+      <p class="mono">${esc(G.n)} · ${esc(G.ax)}</p>
+      <h1 class="mname">${esc(m.n)}</h1>
+      <p class="local">${esc(m.l)}</p>
+      <p class="moment">${esc(m.m)}</p>
+      <div class="tempo" aria-label="Typical tempo about ${m.bpm} beats per minute">
+        <div class="tempo-read"><span class="dot" id="beatdot"></span>≈ ${m.bpm} bpm</div>
+        <div class="scale"><span style="left:${pos(m.bpm)}%"></span></div>
+        <div class="scale-l"><span>slow · ${BMIN}</span><span>fast · ${BMAX}</span></div>
+      </div>
+      <div class="meta"><span>Often around <b>${esc(m.t)}</b></span><span>Sounds that live here: <b>${esc(m.s)}</b></span></div>
+    </div>
+    <h2 class="sec">carried by</h2>
+    ${prim.length ? prim.map(s => card(s, m)).join("")
+      : `<div class="empty">Nobody carries this feeling as their main one yet. <a href="#suggest" data-mood="${m.id}">Know a set that sits with it?</a></div>`}
+    ${also.length ? `<h2 class="sec">also holds this feeling</h2>${also.map(s => card(s, m)).join("")}` : ""}
+    <h2 class="sec">drift to</h2>
+    <div class="drift">
+      <a class="chip" href="#${g.id}">${esc(g.n)}<i>gently · ${g.bpm}</i></a>
+      <a class="chip" href="#${x.id}">${esc(x.n)}<i>a stretch · ${x.bpm}</i></a>
+    </div>
+    <p class="cta">Know a set that feels like this? <a href="#suggest" data-mood="${m.id}">Suggest it</a>.</p>
+  </section>`;
+  mountScene(document.getElementById("sc"), {bpm: m.bpm, col: m.col, kick: kickFor(m), kind: KIND[m.id] || "wave"});
+  wirePreviews(m);
+  const dot = document.getElementById("beatdot");
+  if (dot && !still && dot.animate) dot.animate([{transform:"scale(1.6)", opacity:1}, {transform:"scale(1)", opacity:.45}], {duration: 60000 / m.bpm, iterations: Infinity, easing: "ease-out"});
+}
+let preMood = "";
+function suggest(){
+  const opts = GROUPS.map(g => `<optgroup label="${esc(g.n)}">${M.filter(m => m.g === g.k).map(m => `<option value="${m.id}"${m.id === preMood ? " selected" : ""}>${esc(m.n)} (${esc(m.l)})</option>`).join("")}</optgroup>`).join("");
+  app.innerHTML = `<section class="view prose">
+    <div class="scene" id="sc"></div>
+    <h1>Suggest a set</h1>
+    <p>Tell us how it feels, not what genre it is. Two people listen to every suggestion before it goes up. More nominations never move a set up the page, so one is enough.</p>
+    <form id="sform" novalidate>
+      <label for="f-url">Link to the set (YouTube or SoundCloud)
+        <input type="url" id="f-url" placeholder="https://soundcloud.com/…" autocomplete="off"></label>
+      <label for="f-who">Selector name and city
+        <input type="text" id="f-who" placeholder="dan, Singapore"></label>
+      <label for="f-mood">The feeling
+        <select id="f-mood"><option value="">Choose one</option>${opts}</select></label>
+      <label for="f-moment">The moment, in your words
+        <textarea id="f-moment" placeholder="Deep work, too many tabs open"></textarea></label>
+      <label for="f-time">Where the feeling is strongest, and the tempo if you know it (optional)
+        <input type="text" id="f-time" placeholder="from 23:10, about 124 bpm"></label>
+      <label class="check" for="f-ok"><input type="checkbox" id="f-ok"> I'm the selector, or I'll check they're happy to be featured.</label>
+      <p class="err" id="f-err" role="alert"></p>
+      <button class="btn" type="submit">Send suggestion</button>
+    </form>
+    <div class="note" id="f-done" hidden></div>
+  </section>`;
+  mountScene(document.getElementById("sc"), {bpm: 96, col: "#EDE8DF", kick: .3, kind: "wave"});
+  document.getElementById("sform").addEventListener("submit", onSubmit);
+  ["f-url","f-who","f-mood","f-moment","f-ok"].forEach(id => document.getElementById(id).addEventListener("input", () => { document.getElementById("f-err").textContent = ""; }));
+}
+async function onSubmit(e){
+  e.preventDefault();
+  const v = id => document.getElementById(id).value.trim();
+  const err = document.getElementById("f-err");
+  const url = v("f-url"), who = v("f-who"), md = v("f-mood"), mo = v("f-moment"), tm = v("f-time"), ok = document.getElementById("f-ok").checked;
+  if (!/^https?:\/\/\S+\.\S+/.test(url)) { err.textContent = "Add a full link that starts with https://"; return; }
+  if (!/(youtube\.com|youtu\.be|soundcloud\.com)/i.test(url)) { err.textContent = "Teman only links to YouTube or SoundCloud. Add a link from one of those."; return; }
+  if (who.length < 2) { err.textContent = "Add the selector's name and city."; return; }
+  if (!md) { err.textContent = "Choose the feeling this set carries."; return; }
+  if (mo.length < 8) { err.textContent = "Describe the moment in a few words. That's how we tag it."; return; }
+  if (!ok) { err.textContent = "Tick the box to confirm the selector is happy to be featured."; return; }
+  const item = {url, who, mood: md, moment: mo, time: tm, at: new Date().toISOString()};
+  const done = document.getElementById("f-done");
+  if (await saveSuggestion(item)) {
+    done.innerHTML = `<p><strong>Saved to the listening queue.</strong> Thanks for carrying it here.</p>`;
+    document.getElementById("sform").reset();
+  } else {
+    const text = `Teman suggestion\nSet: ${url}\nSelector: ${who}\nFeeling: ${BY[md].n}\nMoment: ${mo}${tm ? "\nNotes: " + tm : ""}`;
+    done.innerHTML = `<p><strong>Almost there.</strong> This page can't store suggestions for you yet, so copy it and send it ${CONTACT ? "to " + esc(CONTACT) : "to whoever shared this page with you"}.</p>
+      <label for="f-copy" class="sr">Your suggestion</label><textarea id="f-copy" readonly>${esc(text)}</textarea>
+      <p><button class="btn" type="button" id="f-copybtn">Copy suggestion</button> <span id="f-copied" class="mono"></span></p>`;
+    document.getElementById("f-copybtn").addEventListener("click", async () => {
+      const out = document.getElementById("f-copied");
+      try { await navigator.clipboard.writeText(text); out.textContent = "copied"; }
+      catch { document.getElementById("f-copy").select(); out.textContent = "select the text above and copy it"; }
+    });
+  }
+  done.hidden = false;
+}
+let capsP = null;
+function caps(){
+  if (!capsP) capsP = (async () => {
+    try {
+      if (!window.claude || !window.claude.use) return null;
+      const [db, user] = await Promise.all([window.claude.use("db"), window.claude.use("user")]);
+      if (!db || !user) return null;
+      const id = await user.id();
+      return id ? {db, id} : null;
+    } catch { return null; }
+  })();
+  return capsP;
+}
+async function saveSuggestion(item){
+  try {
+    const c = await caps(); if (!c) return false;
+    const ref = c.db.doc("queue/" + c.id);
+    const snap = await ref.get();
+    const items = snap.exists && Array.isArray(snap.data().items) ? snap.data().items.slice(-29) : [];
+    items.push(item);
+    await ref.set({items, updatedAt: item.at});
+    return true;
+  } catch { return false; }
+}
+function why(){
+  app.innerHTML = `<section class="view prose">
+    <div class="scene" id="sc"></div>
+    <h1>Why Teman sounds like this</h1>
+    <p><em>Teman</em> means companion. Lofi became a quiet companion to millions because it never asked you to look at it. Teman tries the same thing with the selectors of Southeast Asia, whose sets are some of the best music made here and some of the least heard.</p>
+    <h2>Feelings, not genres</h2>
+    <p>You come in through a feeling you know and leave with a sound you didn't. Every feeling holds many genres, so your taste stretches without you having to try.</p>
+    <h2>Tempo, not popularity</h2>
+    <p>The line on every page moves at that feeling's pace, and every set shows roughly how fast it goes, so you can tell a slow burn from a peak-time set before you press play. Tempos are estimates from the genres each set describes, not measurements. They get corrected as people listen.</p>
+    <h2>No plays, no charts</h2>
+    <ul>
+      <li><strong>Nothing is sorted by popularity.</strong> The order shuffles every time you open a feeling.</li>
+      <li><strong>No play counts or follower numbers</strong> appear anywhere.</li>
+      <li><strong>Every link goes straight to the set</strong> on YouTube or SoundCloud, so the listening and the following land with the selector.</li>
+    </ul>
+    <h2>How a set gets in</h2>
+    <ul>
+      <li>The selector is from or based in Southeast Asia, and the set is public on YouTube or SoundCloud.</li>
+      <li>It's a real mix with craft in it, not a playlist.</li>
+      <li>Someone names the feeling and the moment it belongs to.</li>
+      <li>Two people listen separately and agree on where it sits.</li>
+      <li>The selector is happy to be here.</li>
+    </ul>
+    <h2>Early days</h2>
+    <p>The first map was built from how each set describes itself. Some tags are first guesses that still need a proper listen. If one feels wrong, <a href="#suggest">tell us</a>.</p>
+  </section>`;
+  mountScene(document.getElementById("sc"), {bpm: 80, col: "#EDE8DF", kick: .2, kind: "wave"});
+}
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1));
+  document.querySelectorAll("nav a").forEach(a => a.removeAttribute("aria-current"));
+  const navKey = h === "suggest" || h === "why" ? h : "feelings";
+  document.querySelector(`nav a[data-nav="${navKey}"]`).setAttribute("aria-current", "page");
+  stopPreview();
+  if (BY[h]) mood(BY[h]); else if (h === "suggest") suggest(); else if (h === "why") why(); else home();
+  scrollTo({top: 0, behavior: "auto"});
+}
+document.addEventListener("click", e => { const a = e.target.closest("a[data-mood]"); if (a) preMood = a.dataset.mood; else if (e.target.closest('a[href="#suggest"]')) preMood = ""; });
+addEventListener("hashchange", route);
+route();
+</script>
+</body>
+</html>
