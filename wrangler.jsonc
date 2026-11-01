@@ -1,6 +1,6 @@
 {
   // Teman: a static site served from Cloudflare's network.
-  "name": "teman",
+  "name": "listen",
   "compatibility_date": "2026-11-01",
   "assets": {
     "directory": "./public"
